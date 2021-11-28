@@ -40,10 +40,11 @@ func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	pos = s.size
-	if err := binary.Write(s.buf, enc, uint64(len(p))); err != nil {
+	l := uint64(len(p))
+	if err := binary.Write(s.buf, enc, l); err != nil {
 		return 0, 0, err
 	}
-	w, err := s.Write(p)
+	w, err := s.buf.Write(p)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -62,7 +63,8 @@ func (s *store) Read(pos uint64) ([]byte, error) {
 	if _, err := s.File.ReadAt(size, int64(pos)); err != nil {
 		return nil, err
 	}
-	b := make([]byte, enc.Uint64(size))
+	lsize := enc.Uint64(size)
+	b := make([]byte, lsize)
 	if _, err := s.File.ReadAt(b, int64(pos+lenWidth)); err != nil {
 		return nil, err
 	}
