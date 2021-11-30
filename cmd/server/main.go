@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-//go:generate protoc api/v1/log.proto --go_out=../.. --go_opt=paths=source_relative --proto_path=../..
+//go:generate protoc api/v1/log.proto --go_out=../.. --go-grpc_out=../.. --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --proto_path=../..
 
 func main() {
 	srv := server.NewHTTPServer(":8080")
